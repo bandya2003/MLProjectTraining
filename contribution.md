@@ -1,4 +1,4 @@
-#I'm currently working on a model that would work like a human and would be able to differentiate between various objects that exist in the world , so for training the model I would need a lot of data .
+I'm currently working on a model that would work like a human and would be able to differentiate between various objects that exist in the world , so for training the model I would need a lot of data .
 
 If you want to contribute to this project and help me out you can do the following :
 
