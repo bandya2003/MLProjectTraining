@@ -1,0 +1,780 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {
+    "_cell_guid": "b1076dfc-b9ad-4769-8c92-a6c4dae69d19",
+    "_uuid": "8f2839f25d086af736a60e9eeb907d3b93b6e0e5",
+    "execution": {
+     "iopub.execute_input": "2021-06-21T12:32:55.394360Z",
+     "iopub.status.busy": "2021-06-21T12:32:55.393741Z",
+     "iopub.status.idle": "2021-06-21T12:32:55.415999Z",
+     "shell.execute_reply": "2021-06-21T12:32:55.414664Z",
+     "shell.execute_reply.started": "2021-06-21T12:32:55.394257Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "# This Python 3 environment comes with many helpful analytics libraries installed\n",
+    "# It is defined by the kaggle/python Docker image: https://github.com/kaggle/docker-python\n",
+    "# For example, here's several helpful packages to load\n",
+    "\n",
+    "import numpy as np # linear algebra\n",
+    "import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)\n",
+    "\n",
+    "# Input data files are available in the read-only \"../input/\" directory\n",
+    "# For example, running this (by clicking run or pressing Shift+Enter) will list all files under the input directory\n",
+    "\n",
+    "import os\n",
+    "for dirname, _, filenames in os.walk('/kaggle/input'):\n",
+    "    for filename in filenames:\n",
+    "        print(os.path.join(dirname, filename))\n",
+    "\n",
+    "# You can write up to 20GB to the current directory (/kaggle/working/) that gets preserved as output when you create a version using \"Save & Run All\" \n",
+    "# You can also write temporary files to /kaggle/temp/, but they won't be saved outside of the current session"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-06-21T12:36:31.348105Z",
+     "iopub.status.busy": "2021-06-21T12:36:31.347717Z",
+     "iopub.status.idle": "2021-06-21T12:36:32.003856Z",
+     "shell.execute_reply": "2021-06-21T12:36:32.002744Z",
+     "shell.execute_reply.started": "2021-06-21T12:36:31.348073Z"
+    }
+   },
+   "outputs": [
+    {
+     "ename": "FileNotFoundError",
+     "evalue": "[Errno 2] No such file or directory: '/kaggle/input/tmdb-movie-metadata/tmdb_5000_movies.csv'",
+     "output_type": "error",
+     "traceback": [
+      "\u001b[1;31m---------------------------------------------------------------------------\u001b[0m",
+      "\u001b[1;31mFileNotFoundError\u001b[0m                         Traceback (most recent call last)",
+      "Input \u001b[1;32mIn [2]\u001b[0m, in \u001b[0;36m<cell line: 1>\u001b[1;34m()\u001b[0m\n\u001b[1;32m----> 1\u001b[0m movies \u001b[38;5;241m=\u001b[39m \u001b[43mpd\u001b[49m\u001b[38;5;241;43m.\u001b[39;49m\u001b[43mread_csv\u001b[49m\u001b[43m(\u001b[49m\u001b[38;5;124;43m'\u001b[39;49m\u001b[38;5;124;43m/kaggle/input/tmdb-movie-metadata/tmdb_5000_movies.csv\u001b[39;49m\u001b[38;5;124;43m'\u001b[39;49m\u001b[43m)\u001b[49m\n\u001b[0;32m      2\u001b[0m credits \u001b[38;5;241m=\u001b[39m pd\u001b[38;5;241m.\u001b[39mread_csv(\u001b[38;5;124m'\u001b[39m\u001b[38;5;124m/kaggle/input/tmdb-movie-metadata/tmdb_5000_credits.csv\u001b[39m\u001b[38;5;124m'\u001b[39m)\n",
+      "File \u001b[1;32m~\\AppData\\Local\\Programs\\Python\\Python310\\lib\\site-packages\\pandas\\util\\_decorators.py:311\u001b[0m, in \u001b[0;36mdeprecate_nonkeyword_arguments.<locals>.decorate.<locals>.wrapper\u001b[1;34m(*args, **kwargs)\u001b[0m\n\u001b[0;32m    305\u001b[0m \u001b[38;5;28;01mif\u001b[39;00m \u001b[38;5;28mlen\u001b[39m(args) \u001b[38;5;241m>\u001b[39m num_allow_args:\n\u001b[0;32m    306\u001b[0m     warnings\u001b[38;5;241m.\u001b[39mwarn(\n\u001b[0;32m    307\u001b[0m         msg\u001b[38;5;241m.\u001b[39mformat(arguments\u001b[38;5;241m=\u001b[39marguments),\n\u001b[0;32m    308\u001b[0m         \u001b[38;5;167;01mFutureWarning\u001b[39;00m,\n\u001b[0;32m    309\u001b[0m         stacklevel\u001b[38;5;241m=\u001b[39mstacklevel,\n\u001b[0;32m    310\u001b[0m     )\n\u001b[1;32m--> 311\u001b[0m \u001b[38;5;28;01mreturn\u001b[39;00m func(\u001b[38;5;241m*\u001b[39margs, \u001b[38;5;241m*\u001b[39m\u001b[38;5;241m*\u001b[39mkwargs)\n",
+      "File \u001b[1;32m~\\AppData\\Local\\Programs\\Python\\Python310\\lib\\site-packages\\pandas\\io\\parsers\\readers.py:680\u001b[0m, in \u001b[0;36mread_csv\u001b[1;34m(filepath_or_buffer, sep, delimiter, header, names, index_col, usecols, squeeze, prefix, mangle_dupe_cols, dtype, engine, converters, true_values, false_values, skipinitialspace, skiprows, skipfooter, nrows, na_values, keep_default_na, na_filter, verbose, skip_blank_lines, parse_dates, infer_datetime_format, keep_date_col, date_parser, dayfirst, cache_dates, iterator, chunksize, compression, thousands, decimal, lineterminator, quotechar, quoting, doublequote, escapechar, comment, encoding, encoding_errors, dialect, error_bad_lines, warn_bad_lines, on_bad_lines, delim_whitespace, low_memory, memory_map, float_precision, storage_options)\u001b[0m\n\u001b[0;32m    665\u001b[0m kwds_defaults \u001b[38;5;241m=\u001b[39m _refine_defaults_read(\n\u001b[0;32m    666\u001b[0m     dialect,\n\u001b[0;32m    667\u001b[0m     delimiter,\n\u001b[1;32m   (...)\u001b[0m\n\u001b[0;32m    676\u001b[0m     defaults\u001b[38;5;241m=\u001b[39m{\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mdelimiter\u001b[39m\u001b[38;5;124m\"\u001b[39m: \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124m,\u001b[39m\u001b[38;5;124m\"\u001b[39m},\n\u001b[0;32m    677\u001b[0m )\n\u001b[0;32m    678\u001b[0m kwds\u001b[38;5;241m.\u001b[39mupdate(kwds_defaults)\n\u001b[1;32m--> 680\u001b[0m \u001b[38;5;28;01mreturn\u001b[39;00m \u001b[43m_read\u001b[49m\u001b[43m(\u001b[49m\u001b[43mfilepath_or_buffer\u001b[49m\u001b[43m,\u001b[49m\u001b[43m \u001b[49m\u001b[43mkwds\u001b[49m\u001b[43m)\u001b[49m\n",
+      "File \u001b[1;32m~\\AppData\\Local\\Programs\\Python\\Python310\\lib\\site-packages\\pandas\\io\\parsers\\readers.py:575\u001b[0m, in \u001b[0;36m_read\u001b[1;34m(filepath_or_buffer, kwds)\u001b[0m\n\u001b[0;32m    572\u001b[0m _validate_names(kwds\u001b[38;5;241m.\u001b[39mget(\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mnames\u001b[39m\u001b[38;5;124m\"\u001b[39m, \u001b[38;5;28;01mNone\u001b[39;00m))\n\u001b[0;32m    574\u001b[0m \u001b[38;5;66;03m# Create the parser.\u001b[39;00m\n\u001b[1;32m--> 575\u001b[0m parser \u001b[38;5;241m=\u001b[39m TextFileReader(filepath_or_buffer, \u001b[38;5;241m*\u001b[39m\u001b[38;5;241m*\u001b[39mkwds)\n\u001b[0;32m    577\u001b[0m \u001b[38;5;28;01mif\u001b[39;00m chunksize \u001b[38;5;129;01mor\u001b[39;00m iterator:\n\u001b[0;32m    578\u001b[0m     \u001b[38;5;28;01mreturn\u001b[39;00m parser\n",
+      "File \u001b[1;32m~\\AppData\\Local\\Programs\\Python\\Python310\\lib\\site-packages\\pandas\\io\\parsers\\readers.py:934\u001b[0m, in \u001b[0;36mTextFileReader.__init__\u001b[1;34m(self, f, engine, **kwds)\u001b[0m\n\u001b[0;32m    931\u001b[0m     \u001b[38;5;28mself\u001b[39m\u001b[38;5;241m.\u001b[39moptions[\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mhas_index_names\u001b[39m\u001b[38;5;124m\"\u001b[39m] \u001b[38;5;241m=\u001b[39m kwds[\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mhas_index_names\u001b[39m\u001b[38;5;124m\"\u001b[39m]\n\u001b[0;32m    933\u001b[0m \u001b[38;5;28mself\u001b[39m\u001b[38;5;241m.\u001b[39mhandles: IOHandles \u001b[38;5;241m|\u001b[39m \u001b[38;5;28;01mNone\u001b[39;00m \u001b[38;5;241m=\u001b[39m \u001b[38;5;28;01mNone\u001b[39;00m\n\u001b[1;32m--> 934\u001b[0m \u001b[38;5;28mself\u001b[39m\u001b[38;5;241m.\u001b[39m_engine \u001b[38;5;241m=\u001b[39m \u001b[38;5;28;43mself\u001b[39;49m\u001b[38;5;241;43m.\u001b[39;49m\u001b[43m_make_engine\u001b[49m\u001b[43m(\u001b[49m\u001b[43mf\u001b[49m\u001b[43m,\u001b[49m\u001b[43m \u001b[49m\u001b[38;5;28;43mself\u001b[39;49m\u001b[38;5;241;43m.\u001b[39;49m\u001b[43mengine\u001b[49m\u001b[43m)\u001b[49m\n",
+      "File \u001b[1;32m~\\AppData\\Local\\Programs\\Python\\Python310\\lib\\site-packages\\pandas\\io\\parsers\\readers.py:1218\u001b[0m, in \u001b[0;36mTextFileReader._make_engine\u001b[1;34m(self, f, engine)\u001b[0m\n\u001b[0;32m   1214\u001b[0m     mode \u001b[38;5;241m=\u001b[39m \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mrb\u001b[39m\u001b[38;5;124m\"\u001b[39m\n\u001b[0;32m   1215\u001b[0m \u001b[38;5;66;03m# error: No overload variant of \"get_handle\" matches argument types\u001b[39;00m\n\u001b[0;32m   1216\u001b[0m \u001b[38;5;66;03m# \"Union[str, PathLike[str], ReadCsvBuffer[bytes], ReadCsvBuffer[str]]\"\u001b[39;00m\n\u001b[0;32m   1217\u001b[0m \u001b[38;5;66;03m# , \"str\", \"bool\", \"Any\", \"Any\", \"Any\", \"Any\", \"Any\"\u001b[39;00m\n\u001b[1;32m-> 1218\u001b[0m \u001b[38;5;28mself\u001b[39m\u001b[38;5;241m.\u001b[39mhandles \u001b[38;5;241m=\u001b[39m \u001b[43mget_handle\u001b[49m\u001b[43m(\u001b[49m\u001b[43m  \u001b[49m\u001b[38;5;66;43;03m# type: ignore[call-overload]\u001b[39;49;00m\n\u001b[0;32m   1219\u001b[0m \u001b[43m    \u001b[49m\u001b[43mf\u001b[49m\u001b[43m,\u001b[49m\n\u001b[0;32m   1220\u001b[0m \u001b[43m    \u001b[49m\u001b[43mmode\u001b[49m\u001b[43m,\u001b[49m\n\u001b[0;32m   1221\u001b[0m \u001b[43m    \u001b[49m\u001b[43mencoding\u001b[49m\u001b[38;5;241;43m=\u001b[39;49m\u001b[38;5;28;43mself\u001b[39;49m\u001b[38;5;241;43m.\u001b[39;49m\u001b[43moptions\u001b[49m\u001b[38;5;241;43m.\u001b[39;49m\u001b[43mget\u001b[49m\u001b[43m(\u001b[49m\u001b[38;5;124;43m\"\u001b[39;49m\u001b[38;5;124;43mencoding\u001b[39;49m\u001b[38;5;124;43m\"\u001b[39;49m\u001b[43m,\u001b[49m\u001b[43m \u001b[49m\u001b[38;5;28;43;01mNone\u001b[39;49;00m\u001b[43m)\u001b[49m\u001b[43m,\u001b[49m\n\u001b[0;32m   1222\u001b[0m \u001b[43m    \u001b[49m\u001b[43mcompression\u001b[49m\u001b[38;5;241;43m=\u001b[39;49m\u001b[38;5;28;43mself\u001b[39;49m\u001b[38;5;241;43m.\u001b[39;49m\u001b[43moptions\u001b[49m\u001b[38;5;241;43m.\u001b[39;49m\u001b[43mget\u001b[49m\u001b[43m(\u001b[49m\u001b[38;5;124;43m\"\u001b[39;49m\u001b[38;5;124;43mcompression\u001b[39;49m\u001b[38;5;124;43m\"\u001b[39;49m\u001b[43m,\u001b[49m\u001b[43m \u001b[49m\u001b[38;5;28;43;01mNone\u001b[39;49;00m\u001b[43m)\u001b[49m\u001b[43m,\u001b[49m\n\u001b[0;32m   1223\u001b[0m \u001b[43m    \u001b[49m\u001b[43mmemory_map\u001b[49m\u001b[38;5;241;43m=\u001b[39;49m\u001b[38;5;28;43mself\u001b[39;49m\u001b[38;5;241;43m.\u001b[39;49m\u001b[43moptions\u001b[49m\u001b[38;5;241;43m.\u001b[39;49m\u001b[43mget\u001b[49m\u001b[43m(\u001b[49m\u001b[38;5;124;43m\"\u001b[39;49m\u001b[38;5;124;43mmemory_map\u001b[39;49m\u001b[38;5;124;43m\"\u001b[39;49m\u001b[43m,\u001b[49m\u001b[43m \u001b[49m\u001b[38;5;28;43;01mFalse\u001b[39;49;00m\u001b[43m)\u001b[49m\u001b[43m,\u001b[49m\n\u001b[0;32m   1224\u001b[0m \u001b[43m    \u001b[49m\u001b[43mis_text\u001b[49m\u001b[38;5;241;43m=\u001b[39;49m\u001b[43mis_text\u001b[49m\u001b[43m,\u001b[49m\n\u001b[0;32m   1225\u001b[0m \u001b[43m    \u001b[49m\u001b[43merrors\u001b[49m\u001b[38;5;241;43m=\u001b[39;49m\u001b[38;5;28;43mself\u001b[39;49m\u001b[38;5;241;43m.\u001b[39;49m\u001b[43moptions\u001b[49m\u001b[38;5;241;43m.\u001b[39;49m\u001b[43mget\u001b[49m\u001b[43m(\u001b[49m\u001b[38;5;124;43m\"\u001b[39;49m\u001b[38;5;124;43mencoding_errors\u001b[39;49m\u001b[38;5;124;43m\"\u001b[39;49m\u001b[43m,\u001b[49m\u001b[43m \u001b[49m\u001b[38;5;124;43m\"\u001b[39;49m\u001b[38;5;124;43mstrict\u001b[39;49m\u001b[38;5;124;43m\"\u001b[39;49m\u001b[43m)\u001b[49m\u001b[43m,\u001b[49m\n\u001b[0;32m   1226\u001b[0m \u001b[43m    \u001b[49m\u001b[43mstorage_options\u001b[49m\u001b[38;5;241;43m=\u001b[39;49m\u001b[38;5;28;43mself\u001b[39;49m\u001b[38;5;241;43m.\u001b[39;49m\u001b[43moptions\u001b[49m\u001b[38;5;241;43m.\u001b[39;49m\u001b[43mget\u001b[49m\u001b[43m(\u001b[49m\u001b[38;5;124;43m\"\u001b[39;49m\u001b[38;5;124;43mstorage_options\u001b[39;49m\u001b[38;5;124;43m\"\u001b[39;49m\u001b[43m,\u001b[49m\u001b[43m \u001b[49m\u001b[38;5;28;43;01mNone\u001b[39;49;00m\u001b[43m)\u001b[49m\u001b[43m,\u001b[49m\n\u001b[0;32m   1227\u001b[0m \u001b[43m\u001b[49m\u001b[43m)\u001b[49m\n\u001b[0;32m   1228\u001b[0m \u001b[38;5;28;01massert\u001b[39;00m \u001b[38;5;28mself\u001b[39m\u001b[38;5;241m.\u001b[39mhandles \u001b[38;5;129;01mis\u001b[39;00m \u001b[38;5;129;01mnot\u001b[39;00m \u001b[38;5;28;01mNone\u001b[39;00m\n\u001b[0;32m   1229\u001b[0m f \u001b[38;5;241m=\u001b[39m \u001b[38;5;28mself\u001b[39m\u001b[38;5;241m.\u001b[39mhandles\u001b[38;5;241m.\u001b[39mhandle\n",
+      "File \u001b[1;32m~\\AppData\\Local\\Programs\\Python\\Python310\\lib\\site-packages\\pandas\\io\\common.py:786\u001b[0m, in \u001b[0;36mget_handle\u001b[1;34m(path_or_buf, mode, encoding, compression, memory_map, is_text, errors, storage_options)\u001b[0m\n\u001b[0;32m    781\u001b[0m \u001b[38;5;28;01melif\u001b[39;00m \u001b[38;5;28misinstance\u001b[39m(handle, \u001b[38;5;28mstr\u001b[39m):\n\u001b[0;32m    782\u001b[0m     \u001b[38;5;66;03m# Check whether the filename is to be opened in binary mode.\u001b[39;00m\n\u001b[0;32m    783\u001b[0m     \u001b[38;5;66;03m# Binary mode does not support 'encoding' and 'newline'.\u001b[39;00m\n\u001b[0;32m    784\u001b[0m     \u001b[38;5;28;01mif\u001b[39;00m ioargs\u001b[38;5;241m.\u001b[39mencoding \u001b[38;5;129;01mand\u001b[39;00m \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mb\u001b[39m\u001b[38;5;124m\"\u001b[39m \u001b[38;5;129;01mnot\u001b[39;00m \u001b[38;5;129;01min\u001b[39;00m ioargs\u001b[38;5;241m.\u001b[39mmode:\n\u001b[0;32m    785\u001b[0m         \u001b[38;5;66;03m# Encoding\u001b[39;00m\n\u001b[1;32m--> 786\u001b[0m         handle \u001b[38;5;241m=\u001b[39m \u001b[38;5;28;43mopen\u001b[39;49m\u001b[43m(\u001b[49m\n\u001b[0;32m    787\u001b[0m \u001b[43m            \u001b[49m\u001b[43mhandle\u001b[49m\u001b[43m,\u001b[49m\n\u001b[0;32m    788\u001b[0m \u001b[43m            \u001b[49m\u001b[43mioargs\u001b[49m\u001b[38;5;241;43m.\u001b[39;49m\u001b[43mmode\u001b[49m\u001b[43m,\u001b[49m\n\u001b[0;32m    789\u001b[0m \u001b[43m            \u001b[49m\u001b[43mencoding\u001b[49m\u001b[38;5;241;43m=\u001b[39;49m\u001b[43mioargs\u001b[49m\u001b[38;5;241;43m.\u001b[39;49m\u001b[43mencoding\u001b[49m\u001b[43m,\u001b[49m\n\u001b[0;32m    790\u001b[0m \u001b[43m            \u001b[49m\u001b[43merrors\u001b[49m\u001b[38;5;241;43m=\u001b[39;49m\u001b[43merrors\u001b[49m\u001b[43m,\u001b[49m\n\u001b[0;32m    791\u001b[0m \u001b[43m            \u001b[49m\u001b[43mnewline\u001b[49m\u001b[38;5;241;43m=\u001b[39;49m\u001b[38;5;124;43m\"\u001b[39;49m\u001b[38;5;124;43m\"\u001b[39;49m\u001b[43m,\u001b[49m\n\u001b[0;32m    792\u001b[0m \u001b[43m        \u001b[49m\u001b[43m)\u001b[49m\n\u001b[0;32m    793\u001b[0m     \u001b[38;5;28;01melse\u001b[39;00m:\n\u001b[0;32m    794\u001b[0m         \u001b[38;5;66;03m# Binary mode\u001b[39;00m\n\u001b[0;32m    795\u001b[0m         handle \u001b[38;5;241m=\u001b[39m \u001b[38;5;28mopen\u001b[39m(handle, ioargs\u001b[38;5;241m.\u001b[39mmode)\n",
+      "\u001b[1;31mFileNotFoundError\u001b[0m: [Errno 2] No such file or directory: '/kaggle/input/tmdb-movie-metadata/tmdb_5000_movies.csv'"
+     ]
+    }
+   ],
+   "source": [
+    "movies = pd.read_csv('/kaggle/input/tmdb-movie-metadata/tmdb_5000_movies.csv')\n",
+    "credits = pd.read_csv('/kaggle/input/tmdb-movie-metadata/tmdb_5000_credits.csv') "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-06-21T12:36:33.757778Z",
+     "iopub.status.busy": "2021-06-21T12:36:33.757346Z",
+     "iopub.status.idle": "2021-06-21T12:36:33.781729Z",
+     "shell.execute_reply": "2021-06-21T12:36:33.780738Z",
+     "shell.execute_reply.started": "2021-06-21T12:36:33.757743Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "movies.head(2)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-06-21T12:33:06.308311Z",
+     "iopub.status.busy": "2021-06-21T12:33:06.307921Z",
+     "iopub.status.idle": "2021-06-21T12:33:06.316052Z",
+     "shell.execute_reply": "2021-06-21T12:33:06.314903Z",
+     "shell.execute_reply.started": "2021-06-21T12:33:06.308279Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "movies.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-06-21T12:33:08.787791Z",
+     "iopub.status.busy": "2021-06-21T12:33:08.787389Z",
+     "iopub.status.idle": "2021-06-21T12:33:08.800864Z",
+     "shell.execute_reply": "2021-06-21T12:33:08.799834Z",
+     "shell.execute_reply.started": "2021-06-21T12:33:08.787758Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "credits.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-06-21T12:36:38.687005Z",
+     "iopub.status.busy": "2021-06-21T12:36:38.686521Z",
+     "iopub.status.idle": "2021-06-21T12:36:38.713343Z",
+     "shell.execute_reply": "2021-06-21T12:36:38.711939Z",
+     "shell.execute_reply.started": "2021-06-21T12:36:38.686963Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "movies = movies.merge(credits,on='title')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-06-19T12:48:23.470754Z",
+     "iopub.status.busy": "2021-06-19T12:48:23.470187Z",
+     "iopub.status.idle": "2021-06-19T12:48:23.5041Z",
+     "shell.execute_reply": "2021-06-19T12:48:23.503327Z",
+     "shell.execute_reply.started": "2021-06-19T12:48:23.470724Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "movies.head()\n",
+    "# budget\n",
+    "# homepage\n",
+    "# id\n",
+    "# original_language\n",
+    "# original_title\n",
+    "# popularity\n",
+    "# production_comapny\n",
+    "# production_countries\n",
+    "# release-date(not sure)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-06-21T12:36:41.393733Z",
+     "iopub.status.busy": "2021-06-21T12:36:41.393326Z",
+     "iopub.status.idle": "2021-06-21T12:36:41.406883Z",
+     "shell.execute_reply": "2021-06-21T12:36:41.405822Z",
+     "shell.execute_reply.started": "2021-06-21T12:36:41.393699Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "movies = movies[['movie_id','title','overview','genres','keywords','cast','crew']]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-06-21T12:33:39.517061Z",
+     "iopub.status.busy": "2021-06-21T12:33:39.516481Z",
+     "iopub.status.idle": "2021-06-21T12:33:39.532499Z",
+     "shell.execute_reply": "2021-06-21T12:33:39.531584Z",
+     "shell.execute_reply.started": "2021-06-21T12:33:39.517012Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "movies.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-06-21T12:34:19.382856Z",
+     "iopub.status.busy": "2021-06-21T12:34:19.382331Z",
+     "iopub.status.idle": "2021-06-21T12:34:19.387416Z",
+     "shell.execute_reply": "2021-06-21T12:34:19.386451Z",
+     "shell.execute_reply.started": "2021-06-21T12:34:19.382822Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "import ast"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-06-21T12:36:47.540453Z",
+     "iopub.status.busy": "2021-06-21T12:36:47.539904Z",
+     "iopub.status.idle": "2021-06-21T12:36:47.545014Z",
+     "shell.execute_reply": "2021-06-21T12:36:47.544243Z",
+     "shell.execute_reply.started": "2021-06-21T12:36:47.540418Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "def convert(text):\n",
+    "    L = []\n",
+    "    for i in ast.literal_eval(text):\n",
+    "        L.append(i['name']) \n",
+    "    return L "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-06-21T12:36:50.059538Z",
+     "iopub.status.busy": "2021-06-21T12:36:50.059006Z",
+     "iopub.status.idle": "2021-06-21T12:36:50.073095Z",
+     "shell.execute_reply": "2021-06-21T12:36:50.071577Z",
+     "shell.execute_reply.started": "2021-06-21T12:36:50.059504Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "movies.dropna(inplace=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-06-21T12:36:52.344121Z",
+     "iopub.status.busy": "2021-06-21T12:36:52.343645Z",
+     "iopub.status.idle": "2021-06-21T12:36:52.523910Z",
+     "shell.execute_reply": "2021-06-21T12:36:52.522805Z",
+     "shell.execute_reply.started": "2021-06-21T12:36:52.344082Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "movies['genres'] = movies['genres'].apply(convert)\n",
+    "movies.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-06-21T12:36:55.304439Z",
+     "iopub.status.busy": "2021-06-21T12:36:55.304070Z",
+     "iopub.status.idle": "2021-06-21T12:36:55.738525Z",
+     "shell.execute_reply": "2021-06-21T12:36:55.737123Z",
+     "shell.execute_reply.started": "2021-06-21T12:36:55.304408Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "movies['keywords'] = movies['keywords'].apply(convert)\n",
+    "movies.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-06-19T13:07:21.572473Z",
+     "iopub.status.busy": "2021-06-19T13:07:21.572154Z",
+     "iopub.status.idle": "2021-06-19T13:07:21.578686Z",
+     "shell.execute_reply": "2021-06-19T13:07:21.577661Z",
+     "shell.execute_reply.started": "2021-06-19T13:07:21.572446Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "import ast\n",
+    "ast.literal_eval('[{\"id\": 28, \"name\": \"Action\"}, {\"id\": 12, \"name\": \"Adventure\"}, {\"id\": 14, \"name\": \"Fantasy\"}, {\"id\": 878, \"name\": \"Science Fiction\"}]')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-06-21T12:36:59.511226Z",
+     "iopub.status.busy": "2021-06-21T12:36:59.510859Z",
+     "iopub.status.idle": "2021-06-21T12:36:59.517043Z",
+     "shell.execute_reply": "2021-06-21T12:36:59.515878Z",
+     "shell.execute_reply.started": "2021-06-21T12:36:59.511192Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "def convert3(text):\n",
+    "    L = []\n",
+    "    counter = 0\n",
+    "    for i in ast.literal_eval(text):\n",
+    "        if counter < 3:\n",
+    "            L.append(i['name'])\n",
+    "        counter+=1\n",
+    "    return L "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-06-21T12:37:00.829409Z",
+     "iopub.status.busy": "2021-06-21T12:37:00.828661Z",
+     "iopub.status.idle": "2021-06-21T12:37:04.117090Z",
+     "shell.execute_reply": "2021-06-21T12:37:04.115822Z",
+     "shell.execute_reply.started": "2021-06-21T12:37:00.829355Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "movies['cast'] = movies['cast'].apply(convert)\n",
+    "movies.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-06-21T12:37:07.352886Z",
+     "iopub.status.busy": "2021-06-21T12:37:07.352464Z",
+     "iopub.status.idle": "2021-06-21T12:37:07.367808Z",
+     "shell.execute_reply": "2021-06-21T12:37:07.366250Z",
+     "shell.execute_reply.started": "2021-06-21T12:37:07.352854Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "movies['cast'] = movies['cast'].apply(lambda x:x[0:3])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-06-21T12:37:09.763317Z",
+     "iopub.status.busy": "2021-06-21T12:37:09.762909Z",
+     "iopub.status.idle": "2021-06-21T12:37:09.770917Z",
+     "shell.execute_reply": "2021-06-21T12:37:09.770002Z",
+     "shell.execute_reply.started": "2021-06-21T12:37:09.763278Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "def fetch_director(text):\n",
+    "    L = []\n",
+    "    for i in ast.literal_eval(text):\n",
+    "        if i['job'] == 'Director':\n",
+    "            L.append(i['name'])\n",
+    "    return L "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-06-21T12:37:12.190468Z",
+     "iopub.status.busy": "2021-06-21T12:37:12.189921Z",
+     "iopub.status.idle": "2021-06-21T12:37:15.825662Z",
+     "shell.execute_reply": "2021-06-21T12:37:15.824562Z",
+     "shell.execute_reply.started": "2021-06-21T12:37:12.190407Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "movies['crew'] = movies['crew'].apply(fetch_director)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-06-21T12:34:54.994779Z",
+     "iopub.status.busy": "2021-06-21T12:34:54.994397Z",
+     "iopub.status.idle": "2021-06-21T12:34:55.019276Z",
+     "shell.execute_reply": "2021-06-21T12:34:55.017718Z",
+     "shell.execute_reply.started": "2021-06-21T12:34:54.994738Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "#movies['overview'] = movies['overview'].apply(lambda x:x.split())\n",
+    "movies.sample(5)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-06-21T12:37:20.073320Z",
+     "iopub.status.busy": "2021-06-21T12:37:20.072749Z",
+     "iopub.status.idle": "2021-06-21T12:37:20.079118Z",
+     "shell.execute_reply": "2021-06-21T12:37:20.077997Z",
+     "shell.execute_reply.started": "2021-06-21T12:37:20.073270Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "def collapse(L):\n",
+    "    L1 = []\n",
+    "    for i in L:\n",
+    "        L1.append(i.replace(\" \",\"\"))\n",
+    "    return L1"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-06-21T12:37:21.283329Z",
+     "iopub.status.busy": "2021-06-21T12:37:21.282768Z",
+     "iopub.status.idle": "2021-06-21T12:37:21.486755Z",
+     "shell.execute_reply": "2021-06-21T12:37:21.485878Z",
+     "shell.execute_reply.started": "2021-06-21T12:37:21.283292Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "movies['cast'] = movies['cast'].apply(collapse)\n",
+    "movies['crew'] = movies['crew'].apply(collapse)\n",
+    "movies['genres'] = movies['genres'].apply(collapse)\n",
+    "movies['keywords'] = movies['keywords'].apply(collapse)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-06-21T12:35:23.278589Z",
+     "iopub.status.busy": "2021-06-21T12:35:23.278025Z",
+     "iopub.status.idle": "2021-06-21T12:35:23.311346Z",
+     "shell.execute_reply": "2021-06-21T12:35:23.309971Z",
+     "shell.execute_reply.started": "2021-06-21T12:35:23.278539Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "movies.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-06-21T12:37:31.936583Z",
+     "iopub.status.busy": "2021-06-21T12:37:31.936003Z",
+     "iopub.status.idle": "2021-06-21T12:37:31.975155Z",
+     "shell.execute_reply": "2021-06-21T12:37:31.973928Z",
+     "shell.execute_reply.started": "2021-06-21T12:37:31.936546Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "movies['overview'] = movies['overview'].apply(lambda x:x.split())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-06-21T12:37:34.466349Z",
+     "iopub.status.busy": "2021-06-21T12:37:34.465925Z",
+     "iopub.status.idle": "2021-06-21T12:37:34.572742Z",
+     "shell.execute_reply": "2021-06-21T12:37:34.571676Z",
+     "shell.execute_reply.started": "2021-06-21T12:37:34.466313Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "movies['tags'] = movies['overview'] + movies['genres'] + movies['keywords'] + movies['cast'] + movies['crew']"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-06-21T12:37:40.975174Z",
+     "iopub.status.busy": "2021-06-21T12:37:40.974644Z",
+     "iopub.status.idle": "2021-06-21T12:37:40.981843Z",
+     "shell.execute_reply": "2021-06-21T12:37:40.981059Z",
+     "shell.execute_reply.started": "2021-06-21T12:37:40.975140Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "new = movies.drop(columns=['overview','genres','keywords','cast','crew'])\n",
+    "#new.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-06-21T12:38:00.131473Z",
+     "iopub.status.busy": "2021-06-21T12:38:00.130879Z",
+     "iopub.status.idle": "2021-06-21T12:38:00.160438Z",
+     "shell.execute_reply": "2021-06-21T12:38:00.159476Z",
+     "shell.execute_reply.started": "2021-06-21T12:38:00.131439Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "new['tags'] = new['tags'].apply(lambda x: \" \".join(x))\n",
+    "new.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-06-21T12:38:06.545110Z",
+     "iopub.status.busy": "2021-06-21T12:38:06.544599Z",
+     "iopub.status.idle": "2021-06-21T12:38:07.488307Z",
+     "shell.execute_reply": "2021-06-21T12:38:07.487238Z",
+     "shell.execute_reply.started": "2021-06-21T12:38:06.545079Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "from sklearn.feature_extraction.text import CountVectorizer\n",
+    "cv = CountVectorizer(max_features=5000,stop_words='english')\n",
+    "    "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-06-21T12:38:10.164314Z",
+     "iopub.status.busy": "2021-06-21T12:38:10.163889Z",
+     "iopub.status.idle": "2021-06-21T12:38:10.821200Z",
+     "shell.execute_reply": "2021-06-21T12:38:10.820175Z",
+     "shell.execute_reply.started": "2021-06-21T12:38:10.164279Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "vector = cv.fit_transform(new['tags']).toarray()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-06-19T14:00:41.894747Z",
+     "iopub.status.busy": "2021-06-19T14:00:41.894223Z",
+     "iopub.status.idle": "2021-06-19T14:00:41.900786Z",
+     "shell.execute_reply": "2021-06-19T14:00:41.899989Z",
+     "shell.execute_reply.started": "2021-06-19T14:00:41.894699Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "vector.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-06-21T12:38:13.339451Z",
+     "iopub.status.busy": "2021-06-21T12:38:13.339041Z",
+     "iopub.status.idle": "2021-06-21T12:38:13.390575Z",
+     "shell.execute_reply": "2021-06-21T12:38:13.389373Z",
+     "shell.execute_reply.started": "2021-06-21T12:38:13.339412Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "from sklearn.metrics.pairwise import cosine_similarity"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-06-21T12:38:15.770001Z",
+     "iopub.status.busy": "2021-06-21T12:38:15.769495Z",
+     "iopub.status.idle": "2021-06-21T12:38:18.170463Z",
+     "shell.execute_reply": "2021-06-21T12:38:18.169319Z",
+     "shell.execute_reply.started": "2021-06-21T12:38:15.769960Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "similarity = cosine_similarity(vector)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-06-19T14:06:45.473087Z",
+     "iopub.status.busy": "2021-06-19T14:06:45.472777Z",
+     "iopub.status.idle": "2021-06-19T14:06:45.479647Z",
+     "shell.execute_reply": "2021-06-19T14:06:45.478831Z",
+     "shell.execute_reply.started": "2021-06-19T14:06:45.473061Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "similarity"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-06-19T14:08:46.716222Z",
+     "iopub.status.busy": "2021-06-19T14:08:46.7159Z",
+     "iopub.status.idle": "2021-06-19T14:08:46.7239Z",
+     "shell.execute_reply": "2021-06-19T14:08:46.722946Z",
+     "shell.execute_reply.started": "2021-06-19T14:08:46.716196Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "new[new['title'] == 'The Lego Movie'].index[0]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-06-21T12:38:22.542900Z",
+     "iopub.status.busy": "2021-06-21T12:38:22.542487Z",
+     "iopub.status.idle": "2021-06-21T12:38:22.549786Z",
+     "shell.execute_reply": "2021-06-21T12:38:22.548271Z",
+     "shell.execute_reply.started": "2021-06-21T12:38:22.542867Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "def recommend(movie):\n",
+    "    index = new[new['title'] == movie].index[0]\n",
+    "    distances = sorted(list(enumerate(similarity[index])),reverse=True,key = lambda x: x[1])\n",
+    "    for i in distances[1:6]:\n",
+    "        print(new.iloc[i[0]].title)\n",
+    "        \n",
+    "    "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-06-21T12:38:24.914650Z",
+     "iopub.status.busy": "2021-06-21T12:38:24.914258Z",
+     "iopub.status.idle": "2021-06-21T12:38:24.930018Z",
+     "shell.execute_reply": "2021-06-21T12:38:24.928876Z",
+     "shell.execute_reply.started": "2021-06-21T12:38:24.914616Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "recommend('Gandhi')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-06-21T12:39:59.606924Z",
+     "iopub.status.busy": "2021-06-21T12:39:59.606475Z",
+     "iopub.status.idle": "2021-06-21T12:39:59.612177Z",
+     "shell.execute_reply": "2021-06-21T12:39:59.610858Z",
+     "shell.execute_reply.started": "2021-06-21T12:39:59.606890Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "import pickle"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-06-21T12:40:53.373581Z",
+     "iopub.status.busy": "2021-06-21T12:40:53.373186Z",
+     "iopub.status.idle": "2021-06-21T12:40:53.784869Z",
+     "shell.execute_reply": "2021-06-21T12:40:53.783635Z",
+     "shell.execute_reply.started": "2021-06-21T12:40:53.373547Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "pickle.dump(new,open('movie_list.pkl','wb'))\n",
+    "pickle.dump(similarity,open('similarity.pkl','wb'))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.10.5"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}
