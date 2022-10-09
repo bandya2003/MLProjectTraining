@@ -1,6 +1,6 @@
-I'm currently working on a model that would work like a human and would be able to differentiate between various objects that exist in the world , so for training the model I would need a lot of data .
+<h1>I'm currently working on a model that would work like a human and would be able to differentiate between various objects that exist in the world , so for training the model I would need a lot of data .</h1>
 
-If you want to contribute to this project and help me out you can do the following :
+# If you want to contribute to this project and help me out you can do the following :
 
 
 🎇Add a minimum of 10 images of any object that would help me train the model.
