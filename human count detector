@@ -138,7 +138,8 @@ if __name__ == "__main__":
     # file as input:
 #python main.py -v ‘Path_to_video’
 
- # To give image file as input:
+ # To give image file as input :
+#Human COunt Detecter
 #python main.py -i ‘Path_to-image’
 
 
