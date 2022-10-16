@@ -5,7 +5,7 @@
 
 🎇Add a minimum of 10 images of any object that would help me train the model.
 
-🎇Add any alogorithm that would help me train the model.
+🎇Add any alogorithm or code that would help me train the model.
 
 🎇A data set of the objects  in a seperate folder will be appreciated.
 
