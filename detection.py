@@ -25,3 +25,5 @@ pltd.subplot(1, 1, 1)
 # Displaying Outut
 pltd.imshow(imaging_rgb)  
 pltd.show()  
+pltd increment()
+#plot images
