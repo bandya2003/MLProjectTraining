@@ -35,7 +35,7 @@ You can sign up anytime between October 1 and October 31. Just be sure to sign u
 
 
 
-## Contributors
+## Contributors 🤝
 <a href="https://github.com/bandya2003/MLProjectTraining/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=bandya2003/MLProjectTraining" />
 </a>
