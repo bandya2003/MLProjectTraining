@@ -40,6 +40,8 @@ You can sign up anytime between October 1 and October 31. Just be sure to sign u
   <img src="https://contrib.rocks/image?repo=bandya2003/MLProjectTraining" />
 </a>
 
+## Stats 📊
+![Repo analysis](https://repobeats.axiom.co/api/embed/b1132572223662bda077468654c235473c34767d.svg "Repobeats analytics image")
 
 ### Note
 
